@@ -1,5 +1,6 @@
 Twitter interface class
 Justin Poliey <jdp34@njit.edu>
+http://github.com/jdp/twitterlibphp
 First release Nov 26 2007
 Newest release Aug 14 2008
 
@@ -8,6 +9,10 @@ This is a simple interface to the Twitter API.
 I've tried to keep as close as possible to the real API
 calls (some had to be changed due to ambiguity), but all
 of the arguments are as they are in the official docs.
+
+For documentation, check the project wiki:
+ 
+    http://github.com/jdp/twitterlibphp/wikis
 
 Usage:
  $twitter = new Twitter("username", "password");
