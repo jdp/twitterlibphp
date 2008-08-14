@@ -1,61 +1,27 @@
 <?php
 /*
- * Twitter interface class
- * Justin Poliey <jdp34@njit.edu>
- * First release Nov 26 2007
- * Newest release Aug 14 2008
+ * Copyright (c) <2008> Justin Poliey <jdp34@njit.edu>
  *
- * This is a simple interface to the Twitter API.
- * I've tried to keep as close as possible to the real API
- *   calls (some had to be changed due to ambiguity), but all
- *   of the arguments are as they are in the official docs.
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
  *
- * Usage:
- *  $twitter = new Twitter("username", "password");
- *  $public_timeline_xml = $twitter->getPublicTimeline("xml");
- *
- * Methods:
- *  getPublicTimeline($format [, $since_id])
- *  getFriendsTimeline($format [, $id [, $since ]])
- *  getUserTimeline($format [, $id [, $count [, $since ]]])
- *
- *  showStatus($format, $id)
- *  updateStatus($status)
- *  destroyStatus($format, $id)
- *  getReplies($format [, $page ])
- *  getFriends($format [, $id ])
- *  getFollowers($format [, $lite ])
- *  getFeatured($format)
- *  showUser($format [, $id [, $email ]])
- *
- *  getMessages($format [, $since [, $since_id [, $page ]]])
- *  getSentMessages($format [, $since [, $since_id [, $page ]]])
- *  newMessage($format, $user, $text)
- *  destroyMessage($format, $id)
- *
- *  createFriendship($format, $id)
- *  destroyFriendship($format, $id)
- *  friendshipExists($format, $user_a, $user_b)
- *
- *  verifyCredentials([$format])
- *  endSession()
- *  updateLocation($format, $location)
- *  updateDeliveryDevice($format, $device)
- *  rateLimitStatus($format)
- *
- *  getArchive($format [, $page ])
- *  getFavorites($format [, $id [, $page ]])
- *  createFavorite($format, $id)
- *  destroyFavorite($format, $id)
- *
- *  follow($format, $id)
- *  leave($format, $id)
- *
- *  test($format)
- *  downtimeSchedule($format)
- *
- *  lastStatusCode()
- *  lastAPICall()
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
  */
 
 class Twitter {
