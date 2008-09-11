@@ -232,12 +232,12 @@ class Twitter {
 	}
 	
 	function createFavorite($format, $id) {
-		$api_call = sprintf("http://twitter.com/favourings/create/%d.%s", $id, $format);
+		$api_call = sprintf("http://twitter.com/favorites/create/%d.%s", $id, $format);
 		return $this->APICall($api_call, true, true);
 	}
 	
 	function destroyFavorite($format, $id) {
-		$api_call = sprintf("http://twitter.com/favourings/destroy/%d.%s", $id, $format);
+		$api_call = sprintf("http://twitter.com/favorites/destroy/%d.%s", $id, $format);
 		return $this->APICall($api_call, true, true);
 	}
 	
