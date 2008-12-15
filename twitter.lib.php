@@ -34,9 +34,13 @@ class Twitter {
 	/* Contains the last API call */
 	private $last_api_call;
 	
+	/* Contains the application calling the API */
+	private $application_source;
+
 	/* Twitter class constructor */
-	function Twitter($username, $password) {
+	function Twitter($username, $password, $source=false) {
 		$this->credentials = sprintf("%s:%s", $username, $password);
+		$this->application_source = $source;
 	}
 	
 	function getPublicTimeline($format, $since_id = 0) {
@@ -273,6 +277,9 @@ class Twitter {
 	
 	private function APICall($api_url, $require_credentials = false, $http_post = false) {
 		$curl_handle = curl_init();
+		if($this->application_source){
+			$api_url .= "&source=" . $this->application_source;
+		}
 		curl_setopt($curl_handle, CURLOPT_URL, $api_url);
 		if ($require_credentials) {
 			curl_setopt($curl_handle, CURLOPT_USERPWD, $this->credentials);
