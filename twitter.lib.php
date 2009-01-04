@@ -288,6 +288,7 @@ class Twitter {
 			curl_setopt($curl_handle, CURLOPT_POST, true);
 		}
 		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array('Expect:'));
 		$twitter_data = curl_exec($curl_handle);
 		$this->http_status = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
 		$this->last_api_call = $api_url;
