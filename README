@@ -17,6 +17,9 @@ For documentation, check the project wiki:
 Usage:
  $twitter = new Twitter("username", "password");
  $public_timeline_xml = $twitter->getPublicTimeline("xml");
+
+Constructor:
+ __constructor($username, $password [, $source])
  
 Methods:
  getPublicTimeline($format [, $since_id])
