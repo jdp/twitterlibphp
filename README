@@ -30,7 +30,7 @@ Methods:
  destroyStatus($format, $id)
  getReplies($format [, $page ])
  getFriends($format [, $id ])
- getFollowers($format, [, $page [, $lite ]])
+ getFollowers($format [, $id [, $page [, $lite ]]])
  getFeatured($format)
  showUser($format [, $id [, $email ]])
  getMessages($format [, $since [, $since_id [, $page ]]])

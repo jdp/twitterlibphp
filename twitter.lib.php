@@ -115,11 +115,19 @@ class Twitter {
 		return $this->APICall($api_call, true);
 	}
 	
-	function getFollowers($format, $page = 1, $lite = false) {
-		$api_call = sprintf("http://twitter.com/statuses/followers.%s", $format);
+	function getFollowers($format, $id = NULL, $page = 1, $lite = false) {
+		// either get authenticated users followers, or followers of specified id
+		if ($id) {
+			$api_call = sprintf("http://twitter.com/statuses/followers/%s.%s", $id, $format);
+		}
+		else {
+			$api_call = sprintf("http://twitter.com/statuses/followers.%s", $format);
+		}
+		// pagination
 		if ($page > 1) {
 			$api_call .= "?page={$page}";
 		}
+		// this isnt in the documentation, but apparently it works
 		if ($lite) {
 			$api_call .= sprintf("%slite=true", ($page > 1) ? "&" : "?");
 		}
