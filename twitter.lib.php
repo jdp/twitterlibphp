@@ -115,8 +115,14 @@ class Twitter {
 		return $this->APICall($api_call, true);
 	}
 	
-	function getFollowers($format, $lite = NULL) {
-		$api_call = sprintf("http://twitter.com/statuses/followers.%s%s", $format, ($lite) ? "?lite=true" : NULL);
+	function getFollowers($format, $page = 1, $lite = false) {
+		$api_call = sprintf("http://twitter.com/statuses/followers.%s", $format);
+		if ($page > 1) {
+			$api_call .= "?page={$page}";
+		}
+		if ($lite) {
+			$api_call .= sprintf("%slite=true", ($page > 1) ? "&" : "?");
+		}
 		return $this->APICall($api_call, true);
 	}
 	
