@@ -23,277 +23,482 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+ 
+/**
+ * Twitterlibphp is a PHP implementation of the Twitter API, allowing you
+ * to take advantage of it from within your PHP applications.
+ *
+ * @author Justin Poliey <jdp34@njit.edu>
+ * @package twitterlibphp
+ */
 
+/**
+ * Twitter API class
+ * @package twitterlibphp
+ */
 class Twitter {
-	/* Username:password format string */
+
+	/**
+	 * the Twitter credentials in HTTP format, username:password
+	 * @access private
+	 * @var string
+	 */
 	private $credentials;
 	
-	/* Contains the last HTTP status code returned */
+	/**
+	 * the last HTTP status code returned
+	 * @access private
+	 * @var integer
+	 */
 	private $http_status;
 	
-	/* Contains the last API call */
+	/**
+	 * the whole URL of the last API call
+	 * @access private
+	 * @var string
+	 */
 	private $last_api_call;
 	
-	/* Contains the application calling the API */
+	/**
+	 * the application calling the API
+	 * @access private
+	 * @var string
+	 */
 	private $application_source;
 
-	/* Twitter class constructor */
-	function Twitter($username, $password, $source=false) {
+	/**
+	 * Fills in the credentials {@link $credentials} and the application source {@link $application_source}.
+	 * @param string $username Twitter username
+	 * @param string $password Twitter password
+	 * @param $source string Optional. Name of the application using the API
+	 */
+	function Twitter($username, $password, $source = null) {
 		$this->credentials = sprintf("%s:%s", $username, $password);
 		$this->application_source = $source;
 	}
 	
-	function getPublicTimeline($format, $since_id = 0) {
-		$api_call = sprintf("http://twitter.com/statuses/public_timeline.%s", $format);
-		if ($since_id > 0) {
-			$api_call .= sprintf("?since_id=%d", $since_id);
-		}
+	/**
+	 * Returns the 20 most recent statuses from non-protected users who have set a custom user icon.
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getPublicTimeline($format = 'xml') {
+		$api_call = $this->buildRequest('statuses/public_timeline', $format);
 		return $this->APICall($api_call);
 	}
 	
-	function getFriendsTimeline($format, $id = NULL, $since = NULL) {
-		if ($id != NULL) {
-			$api_call = sprintf("http://twitter.com/statuses/friends_timeline/%s.%s", $id, $format);
-		}
-		else {
-			$api_call = sprintf("http://twitter.com/statuses/friends_timeline.%s", $format);
-		}
-		if ($since != NULL) {
-			$api_call .= sprintf("?since=%s", urlencode($since));
-		}
+	/**
+	 * Returns the 20 most recent statuses posted by the authenticating user and that user's friends.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getFriendsTimeline($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('statuses/friends_timeline', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function getUserTimeline($format, $id = NULL, $count = 20, $since = NULL) {
-		if ($id != NULL) {
-			$api_call = sprintf("http://twitter.com/statuses/user_timeline/%s.%s", $id, $format);
-		}
-		else {
-			$api_call = sprintf("http://twitter.com/statuses/user_timeline.%s", $format);
-		}
-		if ($count != 20) {
-			$api_call .= sprintf("?count=%d", $count);
-		}
-		if ($since != NULL) {
-			$api_call .= sprintf("%ssince=%s", (strpos($api_call, "?count=") === false) ? "?" : "&", urlencode($since));
-		}
+	/**
+	 * Returns the 20 most recent statuses posted from the authenticating user.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getUserTimeline($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('statuses/user_timeline', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function showStatus($format, $id) {
-		$api_call = sprintf("http://twitter.com/statuses/show/%d.%s", $id, $format);
+	/**
+	 * Returns a single status, specified by the $id parameter.
+	 * @param string|integer $id The numerical ID of the status to retrieve
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getStatus($id, $format = 'xml') {
+		$api_call = $this->buildRequest("statuses/show/{$id}", $format);
 		return $this->APICall($api_call);
 	}
 	
-	function updateStatus($status) {
-		$status = urlencode(stripslashes(urldecode($status)));
-		$api_call = sprintf("http://twitter.com/statuses/update.xml?status=%s", $status);
+	/**
+	 * Updates the authenticated user's status.
+	 * @param string $status Text of the status, no URL encoding necessary
+	 * @param string|integer $reply_to ID of the status to reply to. Optional
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function updateStatus($status, $reply_to = null, $format = 'xml') {
+		// kind of hackish, but it's hackish on twitter's side too
+		$args = array('status' => urlencode($status));
+		if ($reply_to) {
+			$args['in_reply_to_status_id'] = $reply_to;
+		}
+		$api_call = $this->buildRequest('statuses/update', $format, $args);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function getReplies($format, $page = 0) {
-		$api_call = sprintf("http://twitter.com/statuses/replies.%s", $format);
-		if ($page) {
-			$api_call .= sprintf("?page=%d", $page);
-		}
+	/**
+	 * Returns the 20 most recent @replies (status updates prefixed with @username) for the authenticating user.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getReplies($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('statuses/replies', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function destroyStatus($format, $id) {
-		$api_call = sprintf("http://twitter.com/statuses/destroy/%d.%s", $id, $format);
+	/**
+	 * Destroys the status specified by the required ID parameter. The authenticating user must be the author of the specified status.
+	 * @param integer|string $id ID of the status to destroy
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function destroyStatus($id, $format = 'xml') {
+		$api_call = $this->buildRequest("statuses/destroy/{$id}", $format);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function getFriends($format, $id = NULL) {
-		// take care of the id parameter
-		if ($id != NULL) {
-			$api_call = sprintf("http://twitter.com/statuses/friends/%s.%s", $id, $format);
-		}
-		else {
-			$api_call = sprintf("http://twitter.com/statuses/friends.%s", $format);
-		}
+	/**
+	 * Returns the authenticating user's friends, each with current status inline.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getFriends($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('statuses/friends', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function getFollowers($format, $id = NULL, $page = 1, $lite = false) {
-		// either get authenticated users followers, or followers of specified id
-		if ($id) {
-			$api_call = sprintf("http://twitter.com/statuses/followers/%s.%s", $id, $format);
-		}
-		else {
-			$api_call = sprintf("http://twitter.com/statuses/followers.%s", $format);
-		}
-		// pagination
-		if ($page > 1) {
-			$api_call .= "?page={$page}";
-		}
-		// this isnt in the documentation, but apparently it works
-		if ($lite) {
-			$api_call .= sprintf("%slite=true", ($page > 1) ? "&" : "?");
-		}
+	/**
+	 * Returns the authenticating user's followers, each with current status inline.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getFollowers($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('statuses/followers', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function getFeatured($format) {
-		$api_call = sprintf("http://twitter.com/statuses/featured.%s", $format);
-		return $this->APICall($api_call);
-	}
-	
-	function showUser($format, $id, $email = NULL) {
-		if ($email == NULL) {
-			$api_call = sprintf("http://twitter.com/users/show/%s.%s", $id, $format);
-		}
-		else {
-			$api_call = sprintf("http://twitter.com/users/show.xml?email=%s", $email);
-		}
+	/**
+	 * Returns extended information of a given user.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function showUser($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('users/show', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function getMessages($format, $since = NULL, $since_id = 0, $page = 1) {
-		$api_call = sprintf("http://twitter.com/direct_messages.%s", $format);
-		if ($since != NULL) {
-			$api_call .= sprintf("?since=%s", urlencode($since));
-		}
-		if ($since_id > 0) {
-			$api_call .= sprintf("%ssince_id=%d", (strpos($api_call, "?since") === false) ? "?" : "&", $since_id);
-		}
-		if ($page > 1) {
-			$api_call .= sprintf("%spage=%d", (strpos($api_call, "?since") === false) ? "?" : "&", $page);
-		}
+	/**
+	 * Returns extended information of a given user.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getMessages($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('direct_messages', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function getSentMessages($format, $since = NULL, $since_id = 0, $page = 1) {
-		$api_call = sprintf("http://twitter.com/direct_messages/sent.%s", $format);
-		if ($since != NULL) {
-			$api_call .= sprintf("?since=%s", urlencode($since));
-		}
-		if ($since_id > 0) {
-			$api_call .= sprintf("%ssince_id=%d", (strpos($api_call, "?since") === false) ? "?" : "&", $since_id);
-		}
-		if ($page > 1) {
-			$api_call .= sprintf("%spage=%d", (strpos($api_call, "?since") === false) ? "?" : "&", $page);
-		}
+	/**
+	 * Returns a list of the 20 most recent direct messages sent by the authenticating user.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getSentMessages($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('direct_messages/sent', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function newMessage($format, $user, $text) {
-		$text = urlencode(stripslashes(urldecode($text)));
-		$api_call = sprintf("http://twitter.com/direct_messages/new.%s?user=%s&text=%s", $format, $user, $text);
+	/**
+	 * Sends a new direct message to the specified user from the authenticating user.
+	 * @param string $user The ID or screen name of a recipient
+	 * @param string $text The message to send
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function newMessage($user, $text, $format = 'xml') {
+		$options = array(
+			'user' => urlencode($user),
+			'text' => urlencode($text)
+		);
+		$api_call = $this->buildRequest('direct_messages/new', $format, $options);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function destroyMessage($format, $id) {
+	/**
+	 * Destroys the direct message specified in the required $id parameter.
+	 * @param integer|string $id The ID of the direct message to destroy
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function destroyMessage($id, $format = 'xml') {
 		$api_call = sprintf("http://twitter.com/direct_messages/destroy/%s.%s", $id, $format);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function createFriendship($format, $id) {
-		$api_call = sprintf("http://twitter.com/friendships/create/%s.%s", $id, $format);
+	/**
+	 * Befriends the user specified in the ID parameter as the authenticating user.
+	 * @param integer|string $id The ID or screen name of the user to befriend
+	 * @param boolean $follow Follow the user as well
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function createFriendship($id, $follow = true, $format = 'xml') {
+		$options = array(
+			'id' => $id,
+			'follow' => $follow
+		);
+		$api_call = $this->buildRequest('friendships/create', $format, $options);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function destroyFriendship($format, $id) {
-		$api_call = sprintf("http://twitter.com/friendships/destroy/%s.%s", $id, $format);
+	/**
+	 * Discontinues friendship with the user specified in the ID parameter as the authenticating user.
+	 * @param integer|string $id The ID or screen name of the user to unfriend
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function destroyFriendship($id, $format = 'xml') {
+		$options = array('id' => $id);
+		$api_call = $this->buildRequest('friendships/destroy', $format, $options);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function friendshipExists($format, $user_a, $user_b) {
-		$api_call = sprintf("http://twitter.com/friendships/exists.%s?user_a=%s&user_b=%s", $format, $user_a, $user_b);
+	/**
+	 * Tests if a friendship exists between two users.
+	 * @param integer|string $user_a The ID or screen name of the first user
+	 * @param integer|string $user_b The ID or screen name of the second user
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function friendshipExists($user_a, $user_b, $format = 'xml') {
+		$options = array(
+			'user_a' => $user_a,
+			'user_b' => $user_b
+		);
+		$api_call = $this->buildRequest('friendships/exists', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function verifyCredentials($format = NULL) {
-		$api_call = sprintf("http://twitter.com/account/verify_credentials%s", ($format != NULL) ? sprintf(".%s", $format) : NULL);
+	/**
+	 * Returns an array of numeric IDs for every user the specified user is followed by.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getFriendIDs($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('friends/ids', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function endSession() {
-		$api_call = "http://twitter.com/account/end_session";
+	/**
+	 * Returns an array of numeric IDs for every user the specified user is following.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getFollowerIDs($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('followers/ids', $format, $options);
 		return $this->APICall($api_call, true);
 	}
 	
-	function updateLocation($format, $location) {
-		$api_call = sprintf("http://twitter.com/account/update_location.%s?location=%s", $format, $location);
+	/**
+	 * Returns an HTTP 200 OK response code and a representation of the requesting user if authentication was successful; returns a 401 status code and an error message if not.
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function verifyCredentials($format = 'xml') {
+		$api_call = $this->buildRequest('account/verify_credentials', $format);
+		return $this->APICall($api_call, true);
+	}
+	
+	/**
+	 * Ends the session of the authenticating user, returning a null cookie.
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function endSession($format = 'xml') {
+		$api_call = $this->buildRequest('account/end_session', $format);
+		return $this->APICall($api_call, true);
+	}
+	
+	/**
+	 * Sets which device Twitter delivers updates to for the authenticating user.
+	 * @param string $device The delivery device used. Must be sms, im, or none
+	 * @return string
+	 */
+	function updateDeliveryDevice($device, $format = 'xml') {
+		$options = array('device' => $device);
+		$api_call = $this->buildRequest('account/update_delivery_advice', $format, $options);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function updateDeliveryDevice($format, $device) {
-		$api_call = sprintf("http://twitter.com/account/update_delivery_device.%s?device=%s", $format, $device);
+	/**
+	 * Sets one or more hex values that control the color scheme of the authenticating user's profile page on twitter.com.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function updateProfileColors($options, $format = 'xml') {
+		$api_call = $this->buildRequest('account/update_profile_colors', $format, $options);
 		return $this->APICall($api_call, true, true);
 	}
 	
-	function rateLimitStatus($format) {
-		$api_call = sprintf("http://twitter.com/account/rate_limit_status.%s", $format);
+	/**
+	 * Sets values that users are able to set under the "Account" tab of their settings page.
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function updateProfile($options, $format = 'xml') {
+		$api_call = $this->buildRequest('account/update_profile', $format, $options);
+		return $this->APICall($api_call, true, true);
+	}
+	
+	/**
+	 * Returns the remaining number of API requests available to the requesting user before the API limit is reached for the current hour.
+	 * @param $format Return format
+	 * @return string
+	 */
+	function rateLimitStatus($format = 'xml') {
+		$api_call = $this->buildRequest('account/rate_limit_status', $format);
 		return $this->APICall($api_call, true);
 	}
 	
-	function getArchive($format, $page = 1) {
-		$api_call = sprintf("http://twitter.com/account/archive.%s", $format);
-		if ($page > 1) {
-			$api_call .= sprintf("?page=%d", $page);
+	/**
+	 * Returns the 20 most recent favorite statuses for the authenticating user or user specified by the ID parameter in the requested format. 
+	 * @param array $options Options to pass to the method
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function getFavorites($options = array(), $format = 'xml') {
+		$api_call = $this->buildRequest('favorites', $format, $options);
+		return $this->APICall($api_call, true);
+	}
+	
+	/**
+	 * Favorites the status specified in the ID parameter as the authenticating user.
+	 * @param integer|string $id The ID of the status to favorite
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function createFavorite($id, $format = 'xml') {
+		$options = array('id' => $id);
+		$api_call = $this->buildRequest('favorites/create', $format, $options);
+		return $this->APICall($api_call, true, true);
+	}
+	
+	/**
+	 * Un-favorites the status specified in the ID parameter as the authenticating user.
+	 * @param integer|string $id The ID of the status to un-favorite
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function destroyFavorite($id, $format = 'xml') {
+		$options = array('id' => $id);
+		$api_call = $this->buildRequest('favorites/destroy', $format, $options);
+		return $this->APICall($api_call, true, true);
+	}
+	
+	/**
+	 * Enables notifications for updates from the specified user to the authenticating user.
+	 * @param integer|string $id The ID or screen name of the user to follow
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function follow($id, $format = 'xml') {
+		$options = array('id' => $id);
+		$api_call = $this->buildRequest('notifications/follow', $format, $options);
+		return $this->APICall($api_call, true, true);
+	}
+	
+	/**
+	 * Disables notifications for updates from the specified user to the authenticating user.
+	 * @param integer|string $id The ID or screen name of the user to leave
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function leave($id, $format = 'xml') {
+		$options = array('id' => $id);
+		$api_call = $this->buildRequest('notifications/leave', $format, $options);
+		return $this->APICall($api_call, true, true);
+	}
+	
+	/**
+	 * Blocks the user specified in the ID parameter as the authenticating user.
+	 * @param integer|string $id The ID or screen name of the user to block
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function createBlock($id, $format = 'xml') {
+		$options = array('id' => $id);
+		$api_call = $this->buildRequest('blocks/create', $format, $options);
+		return $this->APICall($api_call, true, true);
+	}
+	
+	/**
+	 * Un-blocks the user specified in the ID parameter as the authenticating user.
+	 * @param integer|string $id The ID or screen name of the user to follow
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function destroyBlock($id, $format = 'xml') {
+		$options = array('id' => $id);
+		$api_call = $this->buildRequest('blocks/destroy', $format, $options);
+		return $this->APICall($api_call, true, true);
+	}
+	
+	/**
+	 * Returns the string "ok" in the requested format with a 200 OK HTTP status code.
+	 * @param string $format Return format
+	 * @return string
+	 */
+	function test($format = 'xml') {
+		$api_call = $this->buildRequest('help/test', $format);
+		return $this->APICall($api_call, true);
+	}
+	
+	/**
+	 * Builds an API URL out of a method, format, and option list
+	 * @access private
+	 * @param $method string Twitter API method
+	 * @param $fmt string Return format
+	 * @param $options array API method options
+	 * @return string
+	 */
+	private function buildRequest($method, $fmt, $options = array()) {
+		$request = sprintf('http://twitter.com/%s.%s', $method, $fmt);
+		/* Add application source to the options */
+		if ($this->application_source) {
+			$options['source'] = $this->application_source;
 		}
-		return $this->APICall($api_call, true);
-	}
-	
-	function getFavorites($format, $id = NULL, $page = 1) {
-		if ($id == NULL) {
-			$api_call = sprintf("http://twitter.com/favorites.%s", $format);
+		/* Convert all options to GET params */
+		if (count($options) > 0) {
+			$keyvals = array();
+			foreach($options as $option => $value) {
+				array_push($keyvals, sprintf('%s=%s', $option, $value));
+			}
+			$request .= '?' . implode($keyvals, '&');
 		}
-		else {
-			$api_call = sprintf("http://twitter.com/favorites/%s.%s", $id, $format);
-		}
-		if ($page > 1) {
-			$api_call .= sprintf("?page=%d", $page);
-		}
-		return $this->APICall($api_call, true);
+		return $request;
 	}
 	
-	function createFavorite($format, $id) {
-		$api_call = sprintf("http://twitter.com/favorites/create/%d.%s", $id, $format);
-		return $this->APICall($api_call, true, true);
-	}
-	
-	function destroyFavorite($format, $id) {
-		$api_call = sprintf("http://twitter.com/favorites/destroy/%d.%s", $id, $format);
-		return $this->APICall($api_call, true, true);
-	}
-	
-	function follow($format, $id) {
-		$api_call = sprintf("http://twitter.com/notifications/follow/%d.%s", $id, $format);
-		return $this->APICall($api_call, true, true);
-	}
-	
-	function leave($format, $id) {
-		$api_call = sprintf("http://twitter.com/notifications/leave/%d.%s", $id, $format);
-		return $this->APICall($api_call, true, true);
-	}
-	
-	function createBlock($format, $id) {
-		$api_call = sprintf("http://twitter.com/blocks/create/%d.%s", $id, $format);
-		return $this->APICall($api_call, true, true);
-	}
-	
-	function destroyBlock($format, $id) {
-		$api_call = sprintf("http://twitter.com/blocks/destroy/%d.%s", $id, $format);
-		return $this->APICall($api_call, true, true);
-	}
-	
-	function test($format) {
-		$api_call = sprintf("http://twitter.com/help/test.%s", $format);
-		return $this->APICall($api_call, true);
-	}
-	
-	function downtimeSchedule($format) {
-		$api_call = sprintf("http://twitter.com/help/downtime_schedule.%s", $format);
-		return $this->APICall($api_call, true);
-	}
-	
+	/**
+	 * Executes an API call
+	 * @param string $api_url Full URL of the API method
+	 * @param boolean $require_credentials Whether or not credentials are required
+	 * @param boolean $http_post Whether or not to use HTTP POST
+	 * @return string
+	 */
 	private function APICall($api_url, $require_credentials = false, $http_post = false) {
+		// echo url only for debugging
+		echo "{$api_url}\n";
 		$curl_handle = curl_init();
-		if($this->application_source){
-			$api_url .= "&source=" . $this->application_source;
-		}
 		curl_setopt($curl_handle, CURLOPT_URL, $api_url);
 		if ($require_credentials) {
 			curl_setopt($curl_handle, CURLOPT_USERPWD, $this->credentials);
@@ -310,10 +515,18 @@ class Twitter {
 		return $twitter_data;
 	}
 	
+	/**
+	 * Returns the last HTTP status code
+	 * @return integer
+	 */
 	function lastStatusCode() {
 		return $this->http_status;
 	}
 	
+	/**
+	 * Returns the URL of the last API call
+	 * @return string
+	 */
 	function lastAPICall() {
 		return $this->last_api_call;
 	}

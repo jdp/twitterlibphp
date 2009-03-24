@@ -1,0 +1,18 @@
++ Added
+- Removed
+* Changed/fixed
+
+03 24 2008
+* Return formats are no longer first in the argument list, and they all have
+  defaults of XML. That was one of the more irritating things in the library.
+* A lot of methods with multiple options now take a single array that gets
+  mapped to GET parameters, so you don't have to worry about order.
+* Changed showStatus to getStatus
+- Removed getFeatured method
++ Added getFriendIDs method
++ Added getFollowerIDs method
+- Removed updateLocation method
++ Added updateProfileColors method
++ Added updateProfile method
+- Removed downtimeSchedule method
+- Removed getArchive method
