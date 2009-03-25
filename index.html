@@ -3,29 +3,60 @@
 
 <html>
 	<head>
-		<title>twitterlibphp</title>
-		<link rel="stylesheet" href="styles/screen.css" type="text/css" media="screen, projection">
-		<link rel="stylesheet" href="styles/print.css" type="text/css" media="print">    
-		<!--[if IE]><link rel="stylesheet" href="styles/ie.css" type="text/css" media="screen, projection"><![endif]-->
+		<title>twitterlibphp - PHP Twitter Library</title>
+		<link rel="stylesheet" href="styles/reset.css" type="text/css" media="screen, projection" />
+		<link rel="stylesheet" href="styles/default.css" type="text/css" media="screen, projection" />
 	</head>
 	<body>
-		<h1>twitterlibphp</h1>
-		<div class="container">
-			<div class="column span-6">
-				<hr />
-				<h3>Status Methods</h3>
+		<div id="wrapper">
+			<h1>twitterlibphp</h1>
+			<p id="about"><em>Twitterlibphp</em> is a PHP interface to the Twitter REST API.</p>
+			
+			<div id="using" class="section">
+				<h2>Use It</h2>
+				<p>Here's a small example to get you started. It will print your user info.</p>
+				<code>
+<pre>
+// require the twitter library
+require "twitter.lib.php";
+
+// your twitter username and password
+$username = "username";
+$password = "password";
+
+// initialize the twitter class
+$twitter = new Twitter($username, $password);
+
+// fetch your profile in xml format
+$xml = $twitter->showUser();
+
+// display the raw xml
+echo '&lt;pre&gt;';
+echo htmlentities($xml);
+echo '&lt;/pre&gt;';
+</pre>
+				</code>
 			</div>
-			<div class="column span-6">
-				<hr />
-				<h3>Friends Methods</h3>
+			
+			<div id="getting" class="section">
+				<h2>Get It</h2>
+				<ul id="downloads" class="links">
+					<li><a href="http://github.com/jdp/twitterlibphp/zipball/master">Download Zip Archive</a></li>
+					<li><a href="http://github.com/jdp/twitterlibphp/tarball/master">Download Tar Archive</a></li>
+				</ul>
+				<p>You can also keep up to date with the <a href="http://github.com/jdp/twitterlibphp">git repository</a> on GitHub.</p>
 			</div>
-			<div class="column span-6">
-				<hr />
-				<h3>Direct Message Methods</h3>
-			</div>
-			<div class="column span-6 last">
-				<hr />
-				<h3>Friendship Methods</h3>
+			
+			<div id="reading" class="section">
+				<h2>Read About It</h2>
+				<h3>Documentation</h3>
+				<ul class="links">
+					<li><a href="doc">phpdoc Documentation</a></li>
+				</ul>
+				<h3>Tutorials</h3>
+				<ul class="links">
+					<li><a href="http://www.ibm.com/developerworks/opensource/library/os-php-twitter-rss/index.html">Article on IBM developerWorks</a></li>
+				</ul>
 			</div>
 		</div>
 	</body>
