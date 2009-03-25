@@ -2,7 +2,7 @@
 - Removed
 * Changed/fixed
 
-03 24 2008
+03 24 2009
 * Return formats are no longer first in the argument list, and they all have
   defaults of XML. That was one of the more irritating things in the library.
 * A lot of methods with multiple options now take a single array that gets
@@ -16,3 +16,6 @@
 + Added updateProfile method
 - Removed downtimeSchedule method
 - Removed getArchive method
+
+11 26 2007
+* Initial release!
