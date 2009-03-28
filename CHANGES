@@ -2,6 +2,12 @@
 - Removed
 * Changed/fixed
 
+03 28 2009
+* Moved core functionality to TwitterBase class, and made Twitter a subclass
+  of it. That way, a TwitterOAuth class can be extended from TwitterBase in the
+  future
+- Removed a debug message, oops
+
 03 24 2009
 * Return formats are no longer first in the argument list, and they all have
   defaults of XML. That was one of the more irritating things in the library.

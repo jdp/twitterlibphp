@@ -33,18 +33,11 @@
  */
 
 /**
- * Twitter API class
+ * Twitter API abstract class
  * @package twitterlibphp
  */
-class Twitter {
+abstract class TwitterBase {
 
-	/**
-	 * the Twitter credentials in HTTP format, username:password
-	 * @access private
-	 * @var string
-	 */
-	private $credentials;
-	
 	/**
 	 * the last HTTP status code returned
 	 * @access private
@@ -66,17 +59,6 @@ class Twitter {
 	 */
 	private $application_source;
 
-	/**
-	 * Fills in the credentials {@link $credentials} and the application source {@link $application_source}.
-	 * @param string $username Twitter username
-	 * @param string $password Twitter password
-	 * @param $source string Optional. Name of the application using the API
-	 */
-	function Twitter($username, $password, $source = null) {
-		$this->credentials = sprintf("%s:%s", $username, $password);
-		$this->application_source = $source;
-	}
-	
 	/**
 	 * Returns the 20 most recent statuses from non-protected users who have set a custom user icon.
 	 * @param string $format Return format
@@ -489,6 +471,47 @@ class Twitter {
 	}
 	
 	/**
+	 * Returns the last HTTP status code
+	 * @return integer
+	 */
+	function lastStatusCode() {
+		return $this->http_status;
+	}
+	
+	/**
+	 * Returns the URL of the last API call
+	 * @return string
+	 */
+	function lastAPICall() {
+		return $this->last_api_call;
+	}
+}
+
+/**
+ * Access to the Twitter API through HTTP auth
+ * @package twitterlibphp
+ */
+class Twitter extends TwitterBase {
+
+	/**
+	 * the Twitter credentials in HTTP format, username:password
+	 * @access private
+	 * @var string
+	 */
+	private $credentials;
+	
+	/**
+	 * Fills in the credentials {@link $credentials} and the application source {@link $application_source}.
+	 * @param string $username Twitter username
+	 * @param string $password Twitter password
+	 * @param $source string Optional. Name of the application using the API
+	 */
+	function __construct($username, $password, $source = null) {
+		$this->credentials = sprintf("%s:%s", $username, $password);
+		$this->application_source = $source;
+	}
+	
+	/**
 	 * Executes an API call
 	 * @param string $api_url Full URL of the API method
 	 * @param boolean $require_credentials Whether or not credentials are required
@@ -496,8 +519,6 @@ class Twitter {
 	 * @return string
 	 */
 	private function APICall($api_url, $require_credentials = false, $http_post = false) {
-		// echo url only for debugging
-		echo "{$api_url}\n";
 		$curl_handle = curl_init();
 		curl_setopt($curl_handle, CURLOPT_URL, $api_url);
 		if ($require_credentials) {
@@ -514,21 +535,10 @@ class Twitter {
 		curl_close($curl_handle);
 		return $twitter_data;
 	}
-	
-	/**
-	 * Returns the last HTTP status code
-	 * @return integer
-	 */
-	function lastStatusCode() {
-		return $this->http_status;
-	}
-	
-	/**
-	 * Returns the URL of the last API call
-	 * @return string
-	 */
-	function lastAPICall() {
-		return $this->last_api_call;
-	}
+
 }
+
+/**
+ * TODO: Add TwitterOAuth class
+ */
 ?>
