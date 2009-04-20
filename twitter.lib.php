@@ -170,6 +170,9 @@ abstract class TwitterBase {
 	 * @return string
 	 */
 	function showUser($options = array(), $format = 'xml') {
+		if (!array_key_exists('id', $options) && !array_key_exists('user_id', $options) && !array_key_exists('screen_name', $options)) {
+			$options['id'] = substr($this->credentials, 0, strpos($this->credentials, ':'));
+		}
 		$api_call = $this->buildRequest('users/show', $format, $options);
 		return $this->APICall($api_call, true);
 	}
@@ -498,7 +501,7 @@ class Twitter extends TwitterBase {
 	 * @access private
 	 * @var string
 	 */
-	private $credentials;
+	var $credentials;
 	
 	/**
 	 * Fills in the credentials {@link $credentials} and the application source {@link $application_source}.
@@ -518,7 +521,8 @@ class Twitter extends TwitterBase {
 	 * @param boolean $http_post Whether or not to use HTTP POST
 	 * @return string
 	 */
-	private function APICall($api_url, $require_credentials = false, $http_post = false) {
+	protected function APICall($api_url, $require_credentials = false, $http_post = false) {
+		echo $api_url . "\n";
 		$curl_handle = curl_init();
 		curl_setopt($curl_handle, CURLOPT_URL, $api_url);
 		if ($require_credentials) {
