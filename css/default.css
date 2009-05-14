@@ -3,7 +3,8 @@ h2 { font-size: 120%; margin-bottom: .8em; font-weight: bold; }
 p { margin-bottom: 1em; line-height: 1.5em; }
 a { color: #726875; text-decoration: none; }
 a:hover { color: #5E5261; }
+pre { padding: 1em; }
 
-#wrapper { width: 600px; margin: auto; }
+#wrapper { width: 700px; margin: auto; }
 
 .section { margin: 0 0 1em 0; }

@@ -4,19 +4,22 @@
 <html>
 	<head>
 		<title>twitterlibphp - PHP Twitter Library</title>
-		<link rel="stylesheet" href="styles/reset.css" type="text/css" media="screen, projection" />
-		<link rel="stylesheet" href="styles/default.css" type="text/css" media="screen, projection" />
+		<link rel="stylesheet" href="css/reset.css" type="text/css" media="screen, projection" />
+		<link rel="stylesheet" href="css/default.css" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="css/sh_golden.css" type="text/css" media="screen, projection" />
+    <script type="text/javascript" src="js/sh_main.js"></script>
+    <script type="text/javascript" src="js/sh_php.js"></script>
 	</head>
-	<body>
+	<body onload="sh_highlightDocument();">
 		<div id="wrapper">
 			<h1>twitterlibphp</h1>
 			<p id="about"><em>Twitterlibphp</em> is a PHP interface to the Twitter REST API.</p>
-			
+
 			<div id="using" class="section">
 				<h2>Use It</h2>
 				<p>Here's a small example to get you started. It will print your user info.</p>
 				<code>
-<pre>
+<pre class="sh_php">
 // require the twitter library
 require "twitter.lib.php";
 
@@ -37,7 +40,7 @@ echo '&lt;/pre&gt;';
 </pre>
 				</code>
 			</div>
-			
+
 			<div id="getting" class="section">
 				<h2>Get It</h2>
 				<ul id="downloads" class="links">
@@ -46,7 +49,7 @@ echo '&lt;/pre&gt;';
 				</ul>
 				<p>You can also keep up to date with the <a href="http://github.com/jdp/twitterlibphp">git repository</a> on GitHub.</p>
 			</div>
-			
+
 			<div id="reading" class="section">
 				<h2>Read About It</h2>
 				<h3>Documentation</h3>
