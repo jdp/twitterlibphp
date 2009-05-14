@@ -17,7 +17,7 @@
 
 			<div id="using" class="section">
 				<h2>Use It</h2>
-				<p>Here's a small example to get you started. It will print your user info.</p>
+				<p>Here's a small example to get you started: it will show the second page of your @mentions in XML.</p>
 				<code>
 <pre class="sh_php">
 // require the twitter library
@@ -30,13 +30,11 @@ $password = "password";
 // initialize the twitter class
 $twitter = new Twitter($username, $password);
 
-// fetch your profile in xml format
-$xml = $twitter->showUser();
+// fetch your @mentions in json
+$mentions = $twitter->getMentions(array('page'=>2), 'json');
 
-// display the raw xml
-echo '&lt;pre&gt;';
-echo htmlentities($xml);
-echo '&lt;/pre&gt;';
+// pretty-print the json
+print_r(json_decode($mentions));
 </pre>
 				</code>
 			</div>
