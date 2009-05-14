@@ -1,4 +1,5 @@
 twitterlibphp - Twitter/PHP interface
+http://jdp.github.com/twitterlibphp
 
 This is a simple interface to the Twitter API.
 
@@ -7,15 +8,28 @@ calls (some had to be changed due to ambiguity), but all
 of the arguments are as they are in the official docs.
 
 For documentation, go to:
- 
-    http://jdp.github.com/twitterlibphp/doc
-    http://apiwiki.twitter.com
+
+  http://jdp.github.com/twitterlibphp/doc
+  http://apiwiki.twitter.com
 
 Usage:
 
-	$twitter = new Twitter("username", "password");
-	$public_timeline = $twitter->getPublicTimeline();
-	
+  $twitter = new Twitter("username", "password");
+  $public_timeline = $twitter->getPublicTimeline();
+
+  When you go through the docs, a lot of methods just take
+an $options array and a $format parameter. The $options array
+allows you to pass API arguments just like you would if you
+were calling it from pure HTTP. For example:
+
+  $twitter->getMentions(array('page'=>2), 'json')
+
+  is mapped to...
+
+  http://twitter.com/statuses/mentions.json?page=2
+
+
+
 Justin Poliey <jdp34@njit.edu>
 http://justinpoliey.com
-http://jdp.github.com/twitterlibphp
+
