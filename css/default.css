@@ -3,7 +3,7 @@ h1 { margin: 1em 0 1em 0; font-weight: bold; }
 h2 { margin-bottom: .8em; font-weight: bold; }
 p { margin-bottom: 1em; line-height: 1.5em; }
 a { color: blue; /*#726875;*/ text-decoration: none; }
-a:hover { color: #5E5261; }
+a:hover { /*color: #5E5261;*/ text-decoration: underline; }
 pre { padding: 1em; }
 
 #wrapper { width: 700px; margin: auto; }
