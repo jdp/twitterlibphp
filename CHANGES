@@ -2,6 +2,17 @@
 - Removed
 * Changed/fixed
 
+05 14 2009
+- buildRequest was actually kind of unneccessary. Like the second c in that word.
+* Smarter handling of GET/POST requests, thanks to Gabriel Sosa @pendexgabo
+* $require_credentials now defaults to true in apiCall
++ getMentions method maps to statuses/mentions
+* createFriendship takes an array of options now
+* getRateLimitStatus allows you to choose whether or not to authenticate
++ blockExists method maps to blocks/exists
++ getBlocking method maps to blocks/blocking
++ getBlockingIDs method maps to blocks/blocking/ids
+
 03 28 2009
 * Moved core functionality to TwitterBase class, and made Twitter a subclass
   of it. That way, a TwitterOAuth class can be extended from TwitterBase in the
