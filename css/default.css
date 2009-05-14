@@ -1,7 +1,8 @@
-h1 { font-size: 150%; margin: 1em 0 1em 0; font-weight: bold; }
-h2 { font-size: 120%; margin-bottom: .8em; font-weight: bold; }
+h1, h2, p, pre, li { font-size: 110%; }
+h1 { margin: 1em 0 1em 0; font-weight: bold; }
+h2 { margin-bottom: .8em; font-weight: bold; }
 p { margin-bottom: 1em; line-height: 1.5em; }
-a { color: #726875; text-decoration: none; }
+a { color: blue; /*#726875;*/ text-decoration: none; }
 a:hover { color: #5E5261; }
 pre { padding: 1em; }
 
