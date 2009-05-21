@@ -65,7 +65,6 @@ abstract class TwitterBase {
 	 * @return string
 	 */
 	function getPublicTimeline($format = 'xml') {
-		$api_call = $this->buildRequest('statuses/public_timeline', $format);
 		return $this->apiCall('statuses/public_timeline', 'get', $format, array(), false);
 	}
 
