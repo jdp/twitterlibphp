@@ -357,8 +357,7 @@ abstract class TwitterBase {
 	 * @return string
 	 */
 	function createFavorite($id, $format = 'xml') {
-		$options = array('id' => $id);
-		return $this->apiCall('favorites/create', 'post', $format, $options);
+		return $this->apiCall("favorites/create/{$id}", 'post', $format, array());
 	}
 
 	/**
@@ -368,8 +367,7 @@ abstract class TwitterBase {
 	 * @return string
 	 */
 	function destroyFavorite($id, $format = 'xml') {
-		$options = array('id' => $id);
-		return $this->apiCall('favorites/destroy', 'post', $format, $options);
+		return $this->apiCall("favorites/destroy/{$id}", 'post', $format, array());
 	}
 
 	/**
@@ -511,7 +509,7 @@ class Twitter extends TwitterBase {
     if (($http_method == 'get') && (count($options) > 0)) {
       $api_url .= '?' . http_build_query($options);
     }
-    echo $api_url . "\n";
+    //echo $api_url . "\n";
 		curl_setopt($curl_handle, CURLOPT_URL, $api_url);
 		if ($require_credentials) {
 			curl_setopt($curl_handle, CURLOPT_USERPWD, $this->credentials);
