@@ -28,8 +28,5 @@ were calling it from pure HTTP. For example:
 
   http://twitter.com/statuses/mentions.json?page=2
 
-
-
 Justin Poliey <jdp34@njit.edu>
 http://justinpoliey.com
-

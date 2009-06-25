@@ -131,7 +131,7 @@ abstract class TwitterBase {
 		if ($reply_to) {
 			$options['in_reply_to_status_id'] = $reply_to;
 		}
-    return $this->apiCall('statuses/update', 'post', $format, $options);
+    	return $this->apiCall('statuses/update', 'post', $format, $options);
 	}
 
 	/**
@@ -141,7 +141,7 @@ abstract class TwitterBase {
 	 * @return string
 	 */
 	function destroyStatus($id, $format = 'xml') {
-    return $this->apiCall("statuses/destroy/{id}", 'post', $format, $options);
+    	return $this->apiCall("statuses/destroy/{$id}", 'post', $format, $options);
 	}
 
 	/**

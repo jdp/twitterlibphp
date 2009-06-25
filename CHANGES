@@ -2,6 +2,11 @@
 - Removed
 * Changed/fixed
 
+* fixed a bug in destroyStatus
+* removed a call to buildRequest I forgot to get rid of
+* fixed bugs with createFavorite and destroyFavorite
+* removed debug output
+
 05 14 2009
 - buildRequest was actually kind of unneccessary. Like the second c in that word.
 * Smarter handling of GET/POST requests, thanks to Gabriel Sosa @pendexgabo
