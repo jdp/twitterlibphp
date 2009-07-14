@@ -1,8 +1,7 @@
-h1, h2, p, pre, li { font-size: 110%; }
-h1 { margin: 1em 0 1em 0; font-weight: bold; }
-h2 { margin-bottom: .8em; font-weight: bold; }
+h1 { margin: 1em 0 .5em 0; font-weight: bold; font-size: 200%; }
+h2 { margin-bottom: .75em; font-weight: bold;  font-size: 150%; }
 p { margin-bottom: 1em; line-height: 1.5em; }
-a { color: blue; /*#726875;*/ text-decoration: none; }
+a { color: #6B90B5; /*#726875;*/ font-weight: bold; text-decoration: none; }
 a:hover { /*color: #5E5261;*/ text-decoration: underline; }
 pre { padding: 1em; }
 
