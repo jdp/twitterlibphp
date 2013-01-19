@@ -2,6 +2,11 @@
 - Removed
 * Changed/fixed
 
+01 19 2013
+* E_NOTICE: Use of undefined variable $options on line 144 of twitterlib.php
++ abstract function apiCall();
+
+03 24 2009
 * fixed a bug in destroyStatus
 * removed a call to buildRequest I forgot to get rid of
 * fixed bugs with createFavorite and destroyFavorite
