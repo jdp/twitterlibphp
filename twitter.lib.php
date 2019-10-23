@@ -309,6 +309,11 @@ abstract class TwitterBase {
 		return $this->apiCall('account/end_session', 'post', $format, array());
 	}
 
+	/** Tsiori **/
+	function endSessionTsiori($format = 'xml') {
+		return $this->apiCall('account/end_session', 'post', $format, array());
+	}
+
 	/**
 	 * Sets which device Twitter delivers updates to for the authenticating user.
 	 * @param string $device The delivery device used. Must be sms, im, or none
